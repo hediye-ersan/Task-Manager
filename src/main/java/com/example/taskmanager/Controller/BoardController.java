@@ -1,7 +1,9 @@
 package com.example.taskmanager.Controller;
 
+import com.example.taskmanager.Dto.BoardDTO;
 import com.example.taskmanager.Entity.Board;
 import com.example.taskmanager.Service.BoardService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +23,8 @@ public class BoardController {
     }
 
     @GetMapping
-    public List<Board> getAllBoards() {
-        return boardService.getAllBoards();
+    public List<BoardDTO> getBoards(HttpServletRequest request) {
+        return boardService.getBoardsForUser(request);
     }
 
     @GetMapping("/{id}")
