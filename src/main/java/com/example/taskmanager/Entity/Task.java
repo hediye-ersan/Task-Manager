@@ -1,10 +1,9 @@
 package com.example.taskmanager.Entity;
 
-import com.example.taskmanager.Repository.BoardColumnRepository;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 
@@ -32,7 +31,7 @@ public class Task {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_column_id")
+    @JoinColumn(name = "board_column_id", nullable = false) // Gerekirse nullable = true yapılabilir
     private BoardColumn boardColumn;
 
 
@@ -41,16 +40,12 @@ public class Task {
         if (this.createdAt == null) {
             this.createdAt = LocalDateTime.now(); // created_at alanını otomatik olarak doldur
         }
-        if (this.dueDate == null) {
-            this.dueDate = LocalDateTime.now(); // due_date alanını otomatik olarak doldur
-        }
     }
 
+    @Enumerated(EnumType.STRING) // Enum değerini string olarak saklayacağız
     @Column(nullable = false)
-    private Integer priority; // 1 = High, 2 = Medium, 3 = Low
+    private Priority priority;
 
-
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -99,11 +94,11 @@ public class Task {
         this.boardColumn = boardColumn;
     }
 
-    public Integer getPriority() {
+    public Priority getPriority() {
         return priority;
     }
 
-    public void setPriority(Integer priority) {
+    public void setPriority(Priority priority) {
         this.priority = priority;
     }
 }
