@@ -11,7 +11,7 @@ public class TaskMapper {
         task.setTitle(taskDTO.title());
         task.setDescription(taskDTO.description());
         task.setPriority(taskDTO.priority());
-        task.setDueDate(taskDTO.createdAt());
+        task.setCreatedAt(taskDTO.createdAt());
         return task;
     }
 
@@ -20,7 +20,7 @@ public class TaskMapper {
                 task.getTitle(),
                 task.getDescription(),
                 task.getPriority(),
-                task.getDueDate()
+                task.getCreatedAt()
         );
     }
 }
