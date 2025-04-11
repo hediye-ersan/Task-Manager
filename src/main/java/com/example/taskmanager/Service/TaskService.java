@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,16 +33,17 @@ public class TaskService {
                     .orElseThrow(() -> new IllegalStateException("Varsayılan BoardColumn bulunamadı!"));
             task.setBoardColumn(defaultBoardColumn);
         }
-        return taskRepository.save(task); // Task kaydediliyor ve ID atanıyor
+        return task; // prepared task'ı döndürüyoruz
     }
+
 
     @Autowired
     private TaskMapper taskMapper;
 
     public TaskDTO createTask(TaskDTO taskDTO) {
-        Task task = taskMapper.toEntity(taskDTO); // DTO'yu entity'ye dönüştürdük
-        Task savedTask = taskRepository.save(task);
-        return taskMapper.toDTO(savedTask); // Entity'yi tekrar DTO'ya dönüştürdük
+        Task task = taskMapper.toEntity(taskDTO); // DTO'yu Entity'ye dönüştürüyoruz
+        Task savedTask = taskRepository.save(task); // Task'i kaydediyoruz
+        return taskMapper.toDTO(savedTask); // Kaydedilen Task'ı tekrar DTO'ya dönüştürüp döndürüyoruz
     }
 
     public List<TaskDTO> getAllTasks() {
@@ -60,12 +62,36 @@ public class TaskService {
         return taskRepository.findById(id)
                 .map(existingTask -> {
                     Task updatedTask = taskMapper.toEntity(taskDTO);
+
+                    // Güncellenen task'ta 'createdAt' ve 'dueDate' gibi alanları koruyalım
+                    updatedTask.setCreatedAt(existingTask.getCreatedAt()); // 'createdAt' korunacak
+                    if (updatedTask.getDueDate() == null) {
+                        updatedTask.setDueDate(existingTask.getDueDate()); // 'dueDate' korunacak, sadece null ise güncellenir
+                    }
+
                     updatedTask.setId(existingTask.getId());
                     Task savedTask = taskRepository.save(updatedTask);
                     return taskMapper.toDTO(savedTask); // Güncellenmiş task'i DTO olarak döndürdük
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
     }
+
+    public Task updateTaskColumn(Long taskId, Long boardColumnId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + taskId));
+
+        BoardColumn newColumn = boardColumnRepository.findById(boardColumnId)
+                .orElseThrow(() -> new ResourceNotFoundException("BoardColumn not found with id: " + boardColumnId));
+
+        task.setBoardColumn(newColumn); // Sütun güncelleniyor
+
+        // Eğer yeni sütun "Done" ise, dueDate'i şu anki zaman ile güncelle
+        if ("Done".equalsIgnoreCase(newColumn.getName())) {
+            task.setDueDate(LocalDateTime.now());
+        }
+        return taskRepository.save(task); // Güncellenmiş task kaydediliyor
+    }
+
 
     public void deleteTask(Long id) {
         taskRepository.deleteById(id);
