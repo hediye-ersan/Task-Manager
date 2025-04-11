@@ -13,6 +13,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequest(BadRequestException ex) {
+        ErrorResponse error = new ErrorResponse("Bad Request", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<com.example.taskmanager.exceptions.ErrorResponse> handleAllExceptions(Exception ex) {
         com.example.taskmanager.exceptions.ErrorResponse error = new ErrorResponse("Internal Server Error", ex.getMessage());
