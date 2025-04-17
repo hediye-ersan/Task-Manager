@@ -26,12 +26,8 @@ public class TaskController {
 
     @PostMapping
     public TaskDTO createTask(@RequestBody @Valid TaskDTO taskDTO) {
-        Task task = taskMapper.toEntity(taskDTO); // DTO'yu Task'e dönüştürüyoruz
-        task = taskService.prepareTask(task); // prepareTask fonksiyonunu çağırıyoruz
-        TaskDTO savedTaskDTO = taskService.createTask(taskMapper.toDTO(task)); // Task'i kaydediyoruz ve DTO'ya dönüştürüyoruz
-        return savedTaskDTO; // Kaydedilen Task DTO olarak döndürülüyor
+        return taskService.createTask(taskDTO); // TaskService üzerinden işlem yapılıyor
     }
-
 
 
     @PutMapping("/{id}")
