@@ -8,6 +8,7 @@ import com.example.taskmanager.Service.TaskService;
 import com.example.taskmanager.exceptions.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -29,6 +30,12 @@ public class TaskController {
         return taskService.createTask(taskDTO); // TaskService üzerinden işlem yapılıyor
     }
 
+    @GetMapping("/tasks")
+    public ResponseEntity<List<TaskDTO>> getTasksForUser() {
+        List<TaskDTO> tasks = taskService.getTasksForAuthenticatedUser();
+        return ResponseEntity.ok(tasks);
+    }
+
 
     @PutMapping("/{id}")
     public TaskDTO updateTask(@PathVariable Long id, @RequestBody @Valid TaskDTO taskDTO) {
@@ -41,12 +48,13 @@ public class TaskController {
         return taskMapper.toDTO(updatedTask); // Güncellenmiş task DTO olarak döndürülür
     }
 
-
+/*
     @GetMapping("/tasks")
     public List<TaskDTO> getAllTasks() {
         List<TaskDTO> tasks = taskService.getAllTasks();
         return tasks; // Burada zaten enum olarak döndürdük
     }
+*/
 
     @GetMapping("/priorities")
     public List<String> getAllPriorities() {
