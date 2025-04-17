@@ -21,6 +21,7 @@ public class TaskMapper {
     public TaskDTO toDTO(Task task) {
         String boardColumnName = task.getBoardColumn() != null ? task.getBoardColumn().getName() : null;
         return new TaskDTO(
+                task.getId(),
                 task.getTitle(),
                 task.getDescription(),
                 task.getPriority(),

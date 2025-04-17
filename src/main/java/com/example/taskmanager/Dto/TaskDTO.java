@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 public record TaskDTO(
+        Long id,
         @NotEmpty(message = "Title cannot be empty")
         String title,
         @NotEmpty(message = "Description cannot be empty")
