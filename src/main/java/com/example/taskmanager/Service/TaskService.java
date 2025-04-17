@@ -24,19 +24,8 @@ public class TaskService {
     @Autowired
     private TaskRepository taskRepository;
 
-    //TODO:Bu kısım tam anlamıyla çalışmıyor
     @Autowired
     private BoardColumnRepository boardColumnRepository;
-
-    public Task prepareTask(Task task) {
-        if (task.getBoardColumn() == null) {
-            BoardColumn defaultBoardColumn = boardColumnRepository.findById(1L)
-                    .orElseThrow(() -> new IllegalStateException("Varsayılan BoardColumn bulunamadı!"));
-            task.setBoardColumn(defaultBoardColumn);
-        }
-        return task; // prepared task'ı döndürüyoruz
-    }
-
 
     @Autowired
     private TaskMapper taskMapper;
@@ -62,6 +51,15 @@ public class TaskService {
         return taskMapper.toDTO(savedTask);
     }
 
+    public List<TaskDTO> getTasksForAuthenticatedUser() {
+        User user = userService.getAuthenticatedUser(); // Bu metodu senin UserService zaten sağlıyor
+
+        List<Task> tasks = taskRepository.findByUser(user);
+        return tasks.stream()
+                .map(taskMapper::toDTO) // Her task'i DTO'ya dönüştürdük
+                .collect(Collectors.toList());
+    }
+
 
     public List<TaskDTO> getAllTasks() {
         List<Task> tasks = taskRepository.findAll();
@@ -80,18 +78,28 @@ public class TaskService {
                 .map(existingTask -> {
                     Task updatedTask = taskMapper.toEntity(taskDTO);
 
-                    // Güncellenen task'ta 'createdAt' ve 'dueDate' gibi alanları koruyalım
-                    updatedTask.setCreatedAt(existingTask.getCreatedAt()); // 'createdAt' korunacak
+                    // ✅ BoardColumn adı ile entity’yi bul ve set et
+                    BoardColumn column = boardColumnRepository
+                            .findByNameAndUser(taskDTO.boardColumnName(), existingTask.getUser())
+                            .orElseThrow(() -> new ResourceNotFoundException("BoardColumn not found"));
+
+                    updatedTask.setBoardColumn(column);
+                    updatedTask.setUser(existingTask.getUser()); // Kullanıcıyı da taşı
+
+                    // Diğer alanlar
+                    updatedTask.setCreatedAt(existingTask.getCreatedAt());
                     if (updatedTask.getDueDate() == null) {
-                        updatedTask.setDueDate(existingTask.getDueDate()); // 'dueDate' korunacak, sadece null ise güncellenir
+                        updatedTask.setDueDate(existingTask.getDueDate());
                     }
 
                     updatedTask.setId(existingTask.getId());
+
                     Task savedTask = taskRepository.save(updatedTask);
-                    return taskMapper.toDTO(savedTask); // Güncellenmiş task'i DTO olarak döndürdük
+                    return taskMapper.toDTO(savedTask);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
     }
+
 
     public Task updateTaskColumn(Long taskId, Long boardColumnId) {
         Task task = taskRepository.findById(taskId)
