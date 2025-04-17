@@ -29,6 +29,9 @@ public class Task {
     @Column(name = "due_date")
     private LocalDateTime dueDate;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_column_id", nullable = false) // Gerekirse nullable = true yapılabilir
@@ -45,6 +48,14 @@ public class Task {
     @Enumerated(EnumType.STRING) // Enum değerini string olarak saklayacağız
     @Column(nullable = false)
     private Priority priority;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Long getId() {
         return id;

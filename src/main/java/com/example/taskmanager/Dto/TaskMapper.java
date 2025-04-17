@@ -8,25 +8,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TaskMapper {
-
-    private final BoardColumnRepository boardColumnRepository;
-
-    public TaskMapper(BoardColumnRepository boardColumnRepository) {
-        this.boardColumnRepository = boardColumnRepository;
-    }
-
-
     public Task toEntity(TaskDTO taskDTO) {
         Task task = new Task();
         task.setTitle(taskDTO.title());
         task.setDescription(taskDTO.description());
         task.setPriority(taskDTO.priority());
         task.setCreatedAt(taskDTO.createdAt());
-
-        // BoardColumn'u name ile bul ve set et
-        BoardColumn boardColumn = boardColumnRepository.findByName(taskDTO.boardColumnName())
-                .orElseThrow(() -> new RuntimeException("BoardColumn not found with name: " + taskDTO.boardColumnName()));
-        task.setBoardColumn(boardColumn);
+        // boardColumn ve user servis katmanında set edilecek
         return task;
     }
 
@@ -41,5 +29,6 @@ public class TaskMapper {
         );
     }
 }
+
 
 

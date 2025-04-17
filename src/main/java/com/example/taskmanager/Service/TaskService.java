@@ -5,6 +5,7 @@ import com.example.taskmanager.Dto.TaskDTO;
 import com.example.taskmanager.Dto.TaskMapper;
 import com.example.taskmanager.Entity.BoardColumn;
 import com.example.taskmanager.Entity.Task;
+import com.example.taskmanager.Entity.User;
 import com.example.taskmanager.Repository.BoardColumnRepository;
 import com.example.taskmanager.Repository.TaskRepository;
 import com.example.taskmanager.exceptions.ResourceNotFoundException;
@@ -40,11 +41,27 @@ public class TaskService {
     @Autowired
     private TaskMapper taskMapper;
 
+    @Autowired
+    private UserService userService;
+
     public TaskDTO createTask(TaskDTO taskDTO) {
-        Task task = taskMapper.toEntity(taskDTO); // DTO'yu Entity'ye dönüştürüyoruz
-        Task savedTask = taskRepository.save(task); // Task'i kaydediyoruz
-        return taskMapper.toDTO(savedTask); // Kaydedilen Task'ı tekrar DTO'ya dönüştürüp döndürüyoruz
+        Task task = taskMapper.toEntity(taskDTO);
+        User user = userService.getAuthenticatedUser();
+
+        // Gelen boardColumnName değerini kullanıyoruz, null ise "To Do" atanıyor
+        String columnName = taskDTO.boardColumnName() != null ? taskDTO.boardColumnName() : "To Do";
+
+        BoardColumn column = boardColumnRepository
+                .findByNameAndUser(columnName, user)
+                .orElseThrow(() -> new ResourceNotFoundException("Column not found: " + columnName));
+
+        task.setBoardColumn(column);
+        task.setUser(user);
+
+        Task savedTask = taskRepository.save(task);
+        return taskMapper.toDTO(savedTask);
     }
+
 
     public List<TaskDTO> getAllTasks() {
         List<Task> tasks = taskRepository.findAll();
