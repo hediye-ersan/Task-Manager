@@ -34,7 +34,7 @@ public class Task {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_column_id", nullable = false) // Gerekirse nullable = true yapılabilir
+    @JoinColumn(name = "board_column_id", nullable = true) // Gerekirse nullable = true yapılabilir
     private BoardColumn boardColumn;
 
 
