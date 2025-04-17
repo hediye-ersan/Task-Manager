@@ -14,5 +14,5 @@ public record TaskDTO(
         @NotNull(message = "Priority cannot be null")
         Priority priority,
         LocalDateTime createdAt,
-        Long boardColumn
+        String boardColumnName
 ) {}
