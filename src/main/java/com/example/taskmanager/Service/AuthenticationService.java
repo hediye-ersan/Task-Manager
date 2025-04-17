@@ -38,20 +38,23 @@ public class AuthenticationService {
         // Otomatik Board oluştur
         Board board = new Board();
         board.setName("My Board");
-        board.setUser(user);
+        board.setUser(user); // Board'u kullanıcıyla ilişkilendir
 
         // Otomatik Columns oluştur
         BoardColumn todo = new BoardColumn();
         todo.setName("To Do");
         todo.setBoard(board);
+        todo.setUser(user); // BoardColumn'u kullanıcıyla ilişkilendir
 
         BoardColumn inProgress = new BoardColumn();
         inProgress.setName("In Progress");
         inProgress.setBoard(board);
+        inProgress.setUser(user); // BoardColumn'u kullanıcıyla ilişkilendir
 
         BoardColumn done = new BoardColumn();
         done.setName("Done");
         done.setBoard(board);
+        done.setUser(user); // BoardColumn'u kullanıcıyla ilişkilendir
 
         List<BoardColumn> columns = new ArrayList<>();
         columns.add(todo);
@@ -65,6 +68,7 @@ public class AuthenticationService {
 
         return jwtService.generateToken(user.getUsername());
     }
+
 
 
     public String login(String username, String password) {
