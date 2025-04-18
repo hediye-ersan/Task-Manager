@@ -42,9 +42,9 @@ public class TaskController {
         return taskService.updateTask(id, taskDTO); // DTO ile işlem yapıyoruz
     }
 
-    @PutMapping("/{taskId}/move/{boardColumnId}")
-    public TaskDTO updateTaskColumn(@PathVariable Long taskId, @PathVariable Long boardColumnId) {
-        Task updatedTask = taskService.updateTaskColumn(taskId, boardColumnId);
+    @PutMapping("/{taskId}/move/{boardColumnName}")
+    public TaskDTO updateTaskColumn(@PathVariable Long taskId, @PathVariable String boardColumnName) {
+        Task updatedTask = taskService.updateTaskColumn(taskId, boardColumnName);
         return taskMapper.toDTO(updatedTask); // Güncellenmiş task DTO olarak döndürülür
     }
 

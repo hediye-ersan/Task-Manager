@@ -101,12 +101,13 @@ public class TaskService {
     }
 
 
-    public Task updateTaskColumn(Long taskId, Long boardColumnId) {
+    public Task updateTaskColumn(Long taskId, String boardColumnName) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + taskId));
 
-        BoardColumn newColumn = boardColumnRepository.findById(boardColumnId)
-                .orElseThrow(() -> new ResourceNotFoundException("BoardColumn not found with id: " + boardColumnId));
+        User user = task.getUser(); // Task'in kullanıcısını alıyoruz
+        BoardColumn newColumn = boardColumnRepository.findByNameAndUser(boardColumnName, user)
+                .orElseThrow(() -> new ResourceNotFoundException("BoardColumn not found with name: " + boardColumnName));
 
         task.setBoardColumn(newColumn); // Sütun güncelleniyor
 
