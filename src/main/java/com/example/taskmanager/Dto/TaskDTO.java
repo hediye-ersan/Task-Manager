@@ -4,6 +4,7 @@ import com.example.taskmanager.Entity.Priority;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record TaskDTO(
@@ -15,5 +16,6 @@ public record TaskDTO(
         @NotNull(message = "Priority cannot be null")
         Priority priority,
         LocalDateTime createdAt,
-        String boardColumnName
+        String boardColumnName,
+        LocalDate dueDate
 ) {}

@@ -14,6 +14,8 @@ public class TaskMapper {
         task.setDescription(taskDTO.description());
         task.setPriority(taskDTO.priority());
         task.setCreatedAt(taskDTO.createdAt());
+        task.setDueDate(taskDTO.dueDate());
+
         // boardColumn ve user servis katmanında set edilecek
         return task;
     }
@@ -26,7 +28,8 @@ public class TaskMapper {
                 task.getDescription(),
                 task.getPriority(),
                 task.getCreatedAt(),
-                boardColumnName
+                boardColumnName,
+                task.getDueDate()
         );
     }
 }

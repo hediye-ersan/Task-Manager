@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -86,15 +87,15 @@ public class TaskService {
                     updatedTask.setBoardColumn(column);
                     updatedTask.setUser(existingTask.getUser()); // Kullanıcıyı da taşı
 
-                    // Diğer alanlar
+
                     updatedTask.setCreatedAt(existingTask.getCreatedAt());
-                    if (updatedTask.getDueDate() == null) {
-                        updatedTask.setDueDate(existingTask.getDueDate());
-                    }
+
 
                     updatedTask.setId(existingTask.getId());
 
                     Task savedTask = taskRepository.save(updatedTask);
+
+
                     return taskMapper.toDTO(savedTask);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
@@ -113,7 +114,7 @@ public class TaskService {
 
         // Eğer yeni sütun "Done" ise, dueDate'i şu anki zaman ile güncelle
         if ("Done".equalsIgnoreCase(newColumn.getName())) {
-            task.setDueDate(LocalDateTime.now());
+            task.setDueDate(LocalDate.now());
         }
         return taskRepository.save(task); // Güncellenmiş task kaydediliyor
     }
