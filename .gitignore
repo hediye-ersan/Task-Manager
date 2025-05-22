@@ -4,9 +4,12 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# application.properties dosyasını hariç tut
+src/main/resources/application.properties
+
 ### STS ###
 .apt_generated
-.classpath
+.classpaths
 .factorypath
 .project
 .settings
